@@ -13,13 +13,19 @@ const __dirname = path.dirname(__filename);
 app.set("views", "./screen");
 app.set("view engine", "ejs");
 
-import router from "./public/routes/adminRoutes.js";
+import auth from "./public/routes/adminRoutes.js";
+import menu from "./public/routes/menuRoutes.js";
 
 app.use(express.static(__dirname + "/public"));
-app.use("/test", router);
+app.use(auth);
+app.use(menu);
 
 app.get("/", (req, res) => {
-  res.render("index");
+  res.render("connect");
+});
+
+app.get("/error", (req, res) => {
+  res.render("404");
 });
 
 // io.on("connection", function (socket) {

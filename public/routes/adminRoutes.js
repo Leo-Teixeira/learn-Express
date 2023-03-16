@@ -13,7 +13,7 @@ router.post("/connect", (req, res) => {
     req.session.login = login;
     res.redirect("/404");
   } else {
-    res.render("connexion.ejs", { message: "Identifiants incorrects" });
+    res.render("connect.ejs", { message: "Identifiants incorrects" });
   }
 });
 

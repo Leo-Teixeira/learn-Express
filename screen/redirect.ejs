@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <%- include('./template/tailwinds_import.ejs'); %>
+  </head>
+  <body>
+    <div
+      class="mx-auto mt-52 w-full max-w-sm bg-gray-800 border border-gray-700 rounded-lg shadow">
+      <div class="flex flex-col items-center px-10 pt-10 pb-10">
+        <img
+          class="w-24 h-24 mb-3 rounded-full shadow-lg"
+          src="https://imgs.search.brave.com/O3peor6rwfWE8n1ZV4DQkKn13UmledBY9fsEB2epIkM/rs:fit:1200:1200:1/g:ce/aHR0cHM6Ly93d3cu/dXJwc21sLWhkZi5m/ci93cC1jb250ZW50/L3VwbG9hZHMvMjAx/Ny8wMi9hdHRlbnRp/b24ucG5n"
+          alt="Bordered avatar" />
+        <span class="text-sm text-gray-400"
+          >Voulez-vous vraiment vous déconnecter ?</span
+        >
+        <div class="flex mt-4 space-x-3 md:mt-6">
+          <a
+            href="/deconnect"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-green-600 rounded-lg hover:bg-green-700 focus:ring-green-800 focus:outline-none focus:ring-green-300"
+            >Oui</a
+          >
+          <a
+            href="/"
+            class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-red-700 rounded-lg hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-800"
+            >Non</a
+          >
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script>
+  </body>
+</html>

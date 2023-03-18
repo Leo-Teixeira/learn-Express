@@ -11,14 +11,16 @@ router.post("/connect", (req, res) => {
 
   if (login === "admin" && password === "admin") {
     req.session.login = login;
-    res.redirect("/404");
+    res.redirect("/home");
   } else {
     res.render("connect.ejs", { message: "Identifiants incorrects" });
   }
 });
 
 router.get("/deconnect", function (req, res) {
-  res.render("404.ejs");
+  req.session.destroy(() => {
+    res.redirect("/connect");
+  });
 });
 
 export default router;

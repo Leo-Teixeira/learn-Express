@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <%- include('./template/header.ejs'); %>
+    <%- include('./template/tailwinds_import.ejs'); %>
   </head>
-  <body>
+  <body class="flex items-center justify-center h-screen">
     <div class="w-full max-w-xs">
       <form
-        class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        class="bg-gray-900 shadow-md rounded px-8 pt-6 pb-8 mb-4"
         action="/connect"
         method="POST">
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2" for="login">
+          <label class="block text-white text-sm font-bold mb-2" for="login">
             Pseudo
           </label>
           <input
@@ -21,9 +21,7 @@
             placeholder="Votre pseudo" />
         </div>
         <div class="mb-6">
-          <label
-            class="block text-gray-700 text-sm font-bold mb-2"
-            for="password">
+          <label class="block text-white text-sm font-bold mb-2" for="password">
             Mot de passe
           </label>
           <input

@@ -32,6 +32,17 @@ router.get("/about", function (req, res) {
   res.render("about.ejs");
 });
 
+router.get("/chapter/:numeroChapitre", (req, res) => {
+  const numeroChapitre = req.params.numeroChapitre;
+  res.render("chapter.ejs", { numeroChapitre: numeroChapitre });
+});
+
+router.get("/download", function (req, res) {
+  const file = `/assets/clement.txt`;
+  res.download(file);
+  res.redirect("/home");
+});
+
 router.get("/redirect", function (req, res) {
   res.render("redirect.ejs");
 });

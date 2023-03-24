@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chapitre <%= numeroChapitre %></title>
+    <%- include('./template/tailwinds_import.ejs'); %>
+  </head>
+  <body>
+    <%- include('./template/header.ejs'); %>
+    <div class="flex justify-center items-center align-center h-screen">
+      <Button class="rounded-md border border-gray-600" type="button"
+        ><a href="/download" class="btn-download"
+          >Télécharger le fichier</a
+        ></Button
+      >
+    </div>
+    <div class="footer">
+      <nav>
+        <ul>
+          <li><a href="/chapter/1">Chapitre 1</a></li>
+          <li><a href="/chapter/2">Chapitre 2</a></li>
+          <li><a href="/chapter/3">Chapitre 3</a></li>
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>

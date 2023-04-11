@@ -16,7 +16,13 @@ app.set("views", "./screen");
 app.set("view engine", "ejs");
 
 import auth from "./public/routes/adminRoutes.js";
-import menu from "./public/routes/menuRoutes.js";
+import home from "./public/routes/homeRoute.js";
+import chat from "./public/routes/chatRoutes.js";
+import chapter from "./public/routes/chapterRoutes.js";
+import error from "./public/routes/errorRoute.js";
+import redirect from "./public/routes/redirectRoute.js";
+import restApi from "./public/routes/restApiRoutes.js";
+import about from "./public/routes/aboutRoute.js";
 
 app.use(express.urlencoded({ extended: true }));
 
@@ -30,14 +36,16 @@ app.use(
 
 app.use(express.static(__dirname + "/public"));
 app.use(auth);
-app.use(menu);
+app.use(home);
+app.use(chat);
+app.use(chapter);
+app.use(error);
+app.use(redirect);
+app.use(restApi);
+app.use(about);
 
 app.get("/", (req, res) => {
   res.render("connect.ejs");
-});
-
-app.get("/error", (req, res) => {
-  res.render("404");
 });
 
 server.listen(8080, function () {

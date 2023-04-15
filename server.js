@@ -48,6 +48,17 @@ app.get("/", (req, res) => {
   res.render("connect.ejs");
 });
 
+io.on("connection", function (socket) {
+  console.log("a user connected");
+  socket.on("disconnect", function () {
+    console.log("user disconected");
+  });
+
+  socket.on("chat-message", function (message) {
+    io.emit("chat-message", message);
+  });
+});
+
 server.listen(8080, function () {
   console.log("Server is listening on : 8080");
 });

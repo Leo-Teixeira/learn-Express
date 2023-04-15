@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr">
   <head>
-    <link rel="stylesheet" href="/css/chat.css" />
+    <script src="/socket.io/socket.io.js"></script>
+    <!-- <link rel="stylesheet" href="/css/chat.css" /> -->
     <!-- <link rel="stylesheet" href="/css/style.css" /> -->
     <%- include('./template/tailwinds_import.ejs'); %>
     <style></style>
@@ -9,70 +10,47 @@
 
   <header><%- include('./template/header.ejs'); %></header>
 
-  <body id="logged-out">
+  <body class="">
+    <% if (connected == false) { %>
+    <form
+      class="bg-gray-800 shadow-md rounded px-8 pt-6 pb-8 mb-4 justify-center"
+      action="/chatlogin"
+      method="POST">
+      <div class="text-center">
+        <label class="block text-white text-2xl font-bold mb-2">
+          Votre Pseudo
+        </label>
+      </div>
+      <div class="mb-4">
+        <label class="block text-white text-sm font-bold mb-2" for="login">
+          Pseudo :
+        </label>
+        <input
+          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+          id="user"
+          name="user"
+          type="text"
+          placeholder="Votre pseudo" />
+      </div>
+      <div class="flex flex-col items-center">
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          type="submit">
+          Connection
+        </button>
+      </div>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.6.3/flowbite.min.js"></script>
+    <% } else { %>
     <section id="chat">
       <ul id="messages"></ul>
-      <ul id="users"></ul>
       <form action="">
-        <input id="m" autocomplete="off" /><button>Envoyer</button>
-        <input id="date" type="hidden" value="" />
+        <input id="m" autocomplete="off" /><button>Send</button>
+        <input id="pseudo" type="hidden" value= <%= pseudo %> />
       </form>
     </section>
-    <section id="login">
-      <form action="">
-        <label for="u">Pseudo</label>
-        <input id="u" autocomplete="off" autofocus />
-        <p>
-          <button id="login form">Login</button>
-        </p>
-      </form>
-    </section>
-
-    <script src="/socket.io/socket.io.js"></script>
-
     <script>
-      let socket = io();
-      let i;
-      //Fonctions utiles
-      //Scroll vers le bas de page si l'utilisateur n'est pas remonté pour lire d'anciens messages
-      function scrollToBottom() {
-        const windowHeight = window.innerHeight;
-        const scrollTop = window.scrollY || window.pageYOffset;
-        const lastMessage = document.querySelector("#messages li:last-of-type");
-        const lastMessageHeight = lastMessage.offsetHeight;
-        const documentHeight = Math.max(
-          document.body.scrollHeight,
-          document.body.offsetHeight,
-          document.documentElement.clientHeight,
-          document.documentElement.scrollHeight,
-          document.documentElement.offsetHeight
-        );
-        if (
-          scrollTop + windowHeight + 2 * lastMessageHeight >=
-          documentHeight
-        ) {
-          window.scrollTo({ top: documentHeight, behavior: "smooth" });
-        }
-      }
-      //Gestion des événements
-      //Connexion de l'utilisateur
-      //Uniquement si le username n'est pas vide et n'existe pas encore
-      const loginForm = document.querySelector("#login form");
-      loginForm.addEventListener("submit", function (e) {
-        e.preventDefault();
-        const usernameInput = document.querySelector("#login input");
-        const username = usernameInput.value.trim();
-        if (username.length > 0) {
-          const user = { username: username };
-          socket.emit("user-login", user, function (success) {
-            if (success) {
-              document.body.removeAttribute("id");
-              document.querySelector("#chat input").focus();
-            }
-          });
-        }
-      });
-      //Envoi d'un message
+      const socket = io();
       const chatForm = document.querySelector("#chat form");
       chatForm.addEventListener("submit", function (e) {
         e.preventDefault();
@@ -81,6 +59,7 @@
         const message = {
           text: messageText,
           date: new Date(),
+          pseudo: document.querySelector("#pseudo").value.trim(),
         };
         messageInput.value = "";
         if (messageText.length !== 0) {
@@ -88,12 +67,11 @@
         }
         document.querySelector("#chat input").focus();
       });
-      //Réception d'un message
       socket.on("chat-message", function (message) {
         const date = new Date(message.date);
         const formattedDate = date.toLocaleString();
         const messageElement = document.createElement("li");
-        messageElement.innerHTML = `<span class="username"> ${message.username}</span>
+        messageElement.innerHTML = `<span class="username"> ${message.pseudo}</span>
          <span class="chat-date">(${formattedDate})</span> : 
          <span class="chat-message">${message.text}</span>`;
         document.querySelector("#messages").appendChild(messageElement);
@@ -111,55 +89,7 @@
         document.getElementById("messages").appendChild(li);
         scrollToBottom();
       });
-      //Connexion d'un nouvel utilisateur
-      socket.on("user-login", function (user) {
-        let li = document.createElement("li");
-        li.classList.add(user.username, "new");
-        li.innerHTML = user.username + '<span class="typing">typing</span>';
-        document.getElementById("users").appendChild(li);
-        setTimeout(function () {
-          document.querySelector("#users li.new").classList.remove("new");
-        }, 1000);
-      });
-      //Déconnexion d'un utilisateur
-      socket.on("user-logout", function (user) {
-        let selector = "#users li." + user.username;
-        let element = document.querySelector(selector);
-        element.parentNode.removeChild(element);
-      });
-      //Détection saisie utilisateur
-      let typingTimer;
-      let isTyping = false;
-      document.getElementById("m").addEventListener("keypress", function () {
-        clearTimeout(typingTimer);
-        if (!isTyping) {
-          socket.emit("start-typing");
-          isTyping = true;
-        }
-      });
-      document.getElementById("m").addEventListener("keyup", function () {
-        clearTimeout(typingTimer);
-        typingTimer = setTimeout(function () {
-          if (isTyping) {
-            socket.emit("stop-typing");
-            isTyping = false;
-          }
-        }, 500);
-      });
-      // Gestion saisie des autres utilisateurs
-      socket.on("update-typing", function (typingUsers) {
-        let typingSpans = document.querySelectorAll("#users li span.typing");
-        typingSpans.forEach(function (span) {
-          span.style.display = "none";
-        });
-        typingUsers.forEach(function (user) {
-          let selector = "#users li." + user.username + " span.typing";
-          let typingSpan = document.querySelector(selector);
-          if (typingSpan) {
-            typingSpan.style.display = "inline";
-          }
-        });
-      });
     </script>
+    <% } %>
   </body>
 </html>

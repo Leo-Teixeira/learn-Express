@@ -53,13 +53,19 @@
       const socket = io();
       const chatForm = document.querySelector("#chat form");
       chatForm.addEventListener("submit", function (e) {
+        const grosMots = ['merde', 'putain', 'connard', 'enculé', 'salope'];
         e.preventDefault();
         const messageInput = document.querySelector("#m");
-        const messageText = messageInput.value.trim();
+        const pseudo = document.querySelector("#pseudo").value.trim();
+        let messageText = messageInput.value.trim();
+        for (let i = 0; i < grosMots.length; i++) {
+          const regex = new RegExp(grosMots[i], "gi");
+          messageText = messageText.replace(regex, "*".repeat(grosMots[i].length));
+        }
         const message = {
           text: messageText,
           date: new Date(),
-          pseudo: document.querySelector("#pseudo").value.trim(),
+          pseudo: pseudo,
         };
         messageInput.value = "";
         if (messageText.length !== 0) {
@@ -75,19 +81,6 @@
          <span class="chat-date">(${formattedDate})</span> : 
          <span class="chat-message">${message.text}</span>`;
         document.querySelector("#messages").appendChild(messageElement);
-        scrollToBottom();
-      });
-      //Réception d'un message de service
-      socket.on("service-message", function (message) {
-        let li = document.createElement("li");
-        li.classList.add(message.type);
-        let span = document.createElement("span");
-        span.classList.add("info");
-        span.innerHTML = "<strong>SERVER</strong>";
-        li.appendChild(span);
-        li.innerHTML += " " + message.text;
-        document.getElementById("messages").appendChild(li);
-        scrollToBottom();
       });
     </script>
     <% } %>
